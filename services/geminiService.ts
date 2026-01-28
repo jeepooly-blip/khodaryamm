@@ -2,21 +2,10 @@
 import { GoogleGenAI, Chat } from "@google/genai";
 import { CartItem, Language } from "../types";
 
-// Safe environment variable retrieval
-const getApiKey = (): string => {
-  try {
-    const val = (typeof process !== 'undefined' && process.env ? process.env.API_KEY : null) || 
-                (typeof (window as any).process !== 'undefined' && (window as any).process.env ? (window as any).process.env.API_KEY : null) ||
-                (typeof (window as any).env !== 'undefined' ? (window as any).env.API_KEY : null);
-    
-    return typeof val === 'string' ? val : '';
-  } catch (e) {
-    return '';
-  }
-};
-
+// Assistant initialization strictly following @google/genai guidelines
 export const createShoppingAssistant = (lang: Language, cartItems: CartItem[]): Chat | null => {
-  const apiKey = getApiKey();
+  // Guidelines: The API key must be obtained exclusively from the environment variable process.env.API_KEY.
+  const apiKey = process.env.API_KEY;
   
   if (!apiKey) {
     console.warn("Gemini API Key missing. AI Assistant disabled.");
@@ -24,9 +13,11 @@ export const createShoppingAssistant = (lang: Language, cartItems: CartItem[]): 
   }
 
   try {
-    const ai = new GoogleGenAI({ apiKey });
+    // Guidelines: Always use const ai = new GoogleGenAI({apiKey: process.env.API_KEY});
+    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
     const ingredientList = cartItems.map(i => i.name[lang]).join(", ");
     
+    // Guidelines: Use 'gemini-3-flash-preview' for basic text tasks
     return ai.chats.create({
       model: 'gemini-3-flash-preview',
       config: {
@@ -50,6 +41,7 @@ export const createShoppingAssistant = (lang: Language, cartItems: CartItem[]): 
 export const sendAssistantMessage = async (chat: Chat, message: string): Promise<string> => {
   try {
     const result = await chat.sendMessage({ message });
+    // Guidelines: Use the .text property directly (not a method text())
     return result.text || "I'm sorry, I couldn't process that.";
   } catch (error) {
     console.error("Gemini Chat Error:", error);

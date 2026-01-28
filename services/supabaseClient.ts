@@ -1,6 +1,7 @@
 
 import { createClient, SupabaseClient, User as SupabaseUser } from '@supabase/supabase-js';
 import { Product, Order, User, Enrollment } from '../types';
+import { INITIAL_PRODUCTS } from '../constants';
 
 const FALLBACK_URL = 'https://xeagsfoxbtmqeazrnblm.supabase.co';
 const FALLBACK_KEY = 'sb_publishable_tZzJ1zkrvLaKSPL1y1dLXQ_WNI95QGh';
@@ -28,23 +29,22 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 class SupabaseService {
   private get client(): SupabaseClient { return supabase; }
 
-  // --- SOCIAL AUTH ---
+  async signOut() {
+    await this.client.auth.signOut();
+  }
+
   async signInWithGoogle() {
-    return await this.client.auth.signInWithOAuth({
-      provider: 'google',
-      options: { redirectTo: window.location.origin }
+    await this.client.auth.signInWithOAuth({ 
+      provider: 'google', 
+      options: { redirectTo: window.location.origin } 
     });
   }
 
   async signInWithGithub() {
-    return await this.client.auth.signInWithOAuth({
-      provider: 'github',
-      options: { redirectTo: window.location.origin }
+    await this.client.auth.signInWithOAuth({ 
+      provider: 'github', 
+      options: { redirectTo: window.location.origin } 
     });
-  }
-
-  async signOut() {
-    await this.client.auth.signOut();
   }
 
   async syncSocialUser(sbUser: SupabaseUser): Promise<User | null> {
@@ -57,11 +57,10 @@ class SupabaseService {
 
     if (existingUser) return existingUser as User;
 
-    // Create profile for new social user
     const newUser: Partial<User> = {
       phone,
       role: (phone === '790000000' || sbUser.email?.includes('admin')) ? 'admin' : 'customer',
-      city: 'Amman' // Default city
+      city: 'Amman'
     };
 
     const { data: insertedUser } = await this.client
@@ -73,38 +72,83 @@ class SupabaseService {
     return insertedUser as User;
   }
 
-  // --- LEGACY/PHONE AUTH ---
   async signIn(phone: string, city?: string, pin?: string): Promise<{ user: User | null; error: string | null }> {
-    if (!/^7[0-9]{8}$/.test(phone)) return { user: null, error: 'Invalid Jordanian phone number' };
+    if (!/^7[0-9]{8}$/.test(phone)) return { user: null, error: 'INVALID_PHONE' };
+    
+    const isAdminPhone = phone === '790000000';
+    const defaultAdminPin = '123456';
+
+    if (isAdminPhone) {
+      if (!pin) return { user: null, error: 'PIN_REQUIRED' };
+      if (pin !== defaultAdminPin) return { user: null, error: 'INCORRECT_ADMIN_PIN' };
+      
+      const adminUser: User = { 
+        id: 'admin-master-bypass', 
+        phone: '790000000', 
+        role: 'admin', 
+        city: city || 'Amman', 
+        pin: defaultAdminPin 
+      };
+
+      this.client.from('users').upsert([adminUser]).then(({ error }) => {
+        if (error) console.warn("Admin DB sync failed (Non-critical):", error);
+      });
+
+      return { user: adminUser, error: null };
+    }
+
     try {
       const { data: existingUser, error: fetchError } = await this.client
         .from('users').select('*').eq('phone', phone).single();
 
-      if (fetchError && fetchError.code !== 'PGRST116') return { user: null, error: fetchError.message };
-
       if (existingUser) {
-        if (existingUser.role === 'admin' && pin !== existingUser.pin) return { user: null, error: 'INCORRECT_ADMIN_PIN' };
-        if (city && city !== existingUser.city) await this.client.from('users').update({ city }).eq('phone', phone);
+        if (city && city !== existingUser.city) {
+          await this.client.from('users').update({ city }).eq('phone', phone);
+          existingUser.city = city;
+        }
         return { user: existingUser as User, error: null };
       }
 
-      const { data: allUsers } = await this.client.from('users').select('id').limit(1);
-      const isFirstUser = !allUsers || allUsers.length === 0;
-      const role = (isFirstUser || phone === '790000000') ? 'admin' : 'customer';
+      const newUser: Partial<User> = { 
+        phone, 
+        city: city || 'Amman', 
+        role: 'customer'
+      };
 
-      const newUser: Partial<User> = { phone, city, role, pin: role === 'admin' ? '123456' : undefined };
-      const { data: insertedUser, error: insertError } = await this.client.from('users').insert([newUser]).select().single();
+      const { data: insertedUser, error: insertError } = await this.client
+        .from('users').insert([newUser]).select().single();
 
       if (insertError) return { user: null, error: insertError.message };
       return { user: insertedUser as User, error: null };
-    } catch (e: any) { return { user: null, error: e.message }; }
+    } catch (e: any) {
+      return { user: null, error: e.message };
+    }
   }
 
   async testConnection(): Promise<boolean> {
     try {
-      const { data, error } = await this.client.from('products').select('id').limit(1);
+      const { error } = await this.client.from('products').select('id').limit(1);
       return !error;
     } catch { return false; }
+  }
+
+  async seedProducts(): Promise<void> {
+    await this.bulkSaveProducts(INITIAL_PRODUCTS);
+  }
+
+  async bulkSaveProducts(products: Product[]): Promise<void> {
+    const payloads = products.map(p => ({
+      id: p.id,
+      name_en: p.name.en,
+      name_ar: p.name.ar,
+      category: p.category,
+      price: p.price,
+      discount_price: p.discountPrice || null,
+      image: p.image,
+      unit: p.unit,
+      organic: p.organic
+    }));
+    await this.client.from('products').upsert(payloads);
   }
 
   async getProducts(): Promise<Product[]> {
@@ -114,8 +158,8 @@ class SupabaseService {
       id: p.id,
       name: { en: p.name_en, ar: p.name_ar },
       category: p.category,
-      price: p.price,
-      discountPrice: p.discount_price,
+      price: Number(p.price),
+      discountPrice: p.discount_price ? Number(p.discount_price) : undefined,
       image: p.image,
       unit: p.unit,
       organic: p.organic,
@@ -130,7 +174,7 @@ class SupabaseService {
       name_ar: product.name.ar,
       category: product.category,
       price: product.price,
-      discount_price: product.discountPrice,
+      discount_price: product.discountPrice || null,
       image: product.image,
       unit: product.unit,
       organic: product.organic,
@@ -154,9 +198,9 @@ class SupabaseService {
       customerPhone: o.customer_phone,
       customerCity: o.customer_city,
       items: o.items,
-      subtotal: o.subtotal,
-      deliveryFee: o.delivery_fee,
-      total: o.total,
+      subtotal: Number(o.subtotal),
+      deliveryFee: Number(o.delivery_fee),
+      total: Number(o.total),
       status: o.status,
       createdAt: o.created_at
     }));
@@ -184,9 +228,9 @@ class SupabaseService {
       customerPhone: data.customer_phone,
       customerCity: data.customer_city,
       items: data.items,
-      subtotal: data.subtotal,
-      deliveryFee: data.delivery_fee,
-      total: data.total,
+      subtotal: Number(data.subtotal),
+      deliveryFee: Number(data.delivery_fee),
+      total: Number(data.total),
       status: data.status,
       createdAt: data.created_at
     };

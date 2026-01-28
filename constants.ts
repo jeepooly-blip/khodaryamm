@@ -1,89 +1,95 @@
-
 import { Product } from './types';
 
 export const INITIAL_PRODUCTS: Product[] = [
-  // --- DEALS ---
-  { 
-    id: 'v1', 
-    name: { en: "Local Baladi Tomatoes", ar: "بندورة بلدية" }, 
-    category: "vegetables", 
-    price: 0.85,
-    discountPrice: 0.65, 
-    image: "https://images.unsplash.com/photo-1592924357228-91a4daadcfea?w=500", 
-    organic: false,
-    unit: "KG"
-  },
-  { 
-    id: 'f1', 
-    name: { en: "Valencia Oranges", ar: "برتقال فالنسيا" }, 
-    category: "fruits", 
-    price: 1.10,
-    discountPrice: 0.85, 
-    image: "https://images.unsplash.com/photo-1580052614034-c55d20bfee3b?w=500", 
-    organic: false,
-    unit: "KG"
-  },
-  { 
-    id: 'o1', 
-    name: { en: "Medjool Dates Premium", ar: "تمر مجهول نخب أول" }, 
-    category: "other", 
-    price: 7.00,
-    discountPrice: 5.50, 
-    image: "https://images.unsplash.com/photo-1589135091720-6d09323565e3?w=500", 
-    organic: false,
-    unit: "KG"
-  },
+  // --- DEALS & FEATURED ---
+  { id: 'v1', name: { en: "Local Baladi Tomatoes", ar: "بندورة بلدية" }, category: "vegetables", price: 0.85, discountPrice: 0.65, image: "https://images.unsplash.com/photo-1592924357228-91a4daadcfea?w=500", organic: false, unit: "KG" },
+  { id: 'f1', name: { en: "Valencia Oranges", ar: "برتقال فالنسيا" }, category: "fruits", price: 1.10, discountPrice: 0.85, image: "https://images.unsplash.com/photo-1580052614034-c55d20bfee3b?w=500", organic: false, unit: "KG" },
+  { id: 'o1', name: { en: "Medjool Dates Premium", ar: "تمر مجهول نخب أول" }, category: "other", price: 7.00, discountPrice: 5.50, image: "https://images.unsplash.com/photo-1589135091720-6d09323565e3?w=500", organic: false, unit: "KG" },
 
-  // --- VEGETABLES ---
-  { 
-    id: 'v2', 
-    name: { en: "Fresh Cucumbers", ar: "خيار بلدي طازج" }, 
-    category: "vegetables", 
-    price: 0.75, 
-    image: "https://images.unsplash.com/photo-1449300079323-02e209d9d3a6?w=500", 
-    organic: false,
-    unit: "KG"
-  },
-  { 
-    id: 'v6', 
-    name: { en: "Yellow Potatoes", ar: "بطاطا" }, 
-    category: "vegetables", 
-    price: 0.50, 
-    image: "https://images.unsplash.com/photo-1518977676601-b53f02ac6d31?w=500", 
-    organic: false,
-    unit: "KG"
-  },
+  // --- VEGETABLES (Approx 35 items) ---
+  { id: 'v2', name: { en: "Fresh Cucumbers", ar: "خيار بلدي" }, category: "vegetables", price: 0.75, image: "https://images.unsplash.com/photo-1449300079323-02e209d9d3a6?w=500", organic: false, unit: "KG" },
+  { id: 'v3', name: { en: "Yellow Potatoes", ar: "بطاطا صفراء" }, category: "vegetables", price: 0.55, image: "https://images.unsplash.com/photo-1518977676601-b53f02ac6d31?w=500", organic: false, unit: "KG" },
+  { id: 'v4', name: { en: "Red Onions", ar: "بصل أحمر" }, category: "vegetables", price: 0.65, image: "https://images.unsplash.com/photo-1508747703725-719777637510?w=500", organic: false, unit: "KG" },
+  { id: 'v5', name: { en: "White Onions", ar: "بصل أبيض" }, category: "vegetables", price: 0.70, image: "https://images.unsplash.com/photo-1620574387735-3624d75b2dbc?w=500", organic: false, unit: "KG" },
+  { id: 'v6', name: { en: "Sweet Carrots", ar: "جزر" }, category: "vegetables", price: 0.80, image: "https://images.unsplash.com/photo-1598170845058-32b9d6a5da37?w=500", organic: false, unit: "KG" },
+  { id: 'v7', name: { en: "Green Bell Pepper", ar: "فلفل حلو أخضر" }, category: "vegetables", price: 1.10, image: "https://images.unsplash.com/photo-1566248677293-f9a8a6237841?w=500", organic: false, unit: "KG" },
+  { id: 'v8', name: { en: "Red Bell Pepper", ar: "فلفل حلو أحمر" }, category: "vegetables", price: 1.50, image: "https://images.unsplash.com/photo-1588611919725-772418a07106?w=500", organic: false, unit: "KG" },
+  { id: 'v9', name: { en: "Yellow Bell Pepper", ar: "فلفل حلو أصفر" }, category: "vegetables", price: 1.50, image: "https://images.unsplash.com/photo-1566847438217-76e82d383f84?w=500", organic: false, unit: "KG" },
+  { id: 'v10', name: { en: "Local Eggplant", ar: "باذنجان عجمي" }, category: "vegetables", price: 0.70, image: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=500", organic: false, unit: "KG" },
+  { id: 'v11', name: { en: "Zucchini", ar: "كوسا" }, category: "vegetables", price: 1.25, image: "https://images.unsplash.com/photo-1557844352-761f2565b576?w=500", organic: false, unit: "KG" },
+  { id: 'v12', name: { en: "Cauliflower", ar: "زهرة" }, category: "vegetables", price: 0.95, image: "https://images.unsplash.com/photo-1568584711075-3d021a7c3ca3?w=500", organic: false, unit: "KG" },
+  { id: 'v13', name: { en: "Broccoli", ar: "بروكلي" }, category: "vegetables", price: 2.20, image: "https://images.unsplash.com/photo-1459411621453-7b03977f4bfc?w=500", organic: false, unit: "KG" },
+  { id: 'v14', name: { en: "Garlic (Local)", ar: "ثوم بلدي" }, category: "vegetables", price: 3.50, image: "https://images.unsplash.com/photo-1540148426945-6cf22a6b2383?w=500", organic: false, unit: "KG" },
+  { id: 'v15', name: { en: "Ginger Root", ar: "زنجبيل أخضر" }, category: "vegetables", price: 4.00, image: "https://images.unsplash.com/photo-1550989460-0adf9ea622e2?w=500", organic: false, unit: "KG" },
+  { id: 'v16', name: { en: "Spinach (Fresh)", ar: "سبانخ" }, category: "vegetables", price: 0.60, image: "https://images.unsplash.com/photo-1576045057995-568f588f82fb?w=500", organic: false, unit: "Bundle" },
+  { id: 'v17', name: { en: "Parsley", ar: "بقدونس" }, category: "vegetables", price: 0.25, image: "https://images.unsplash.com/photo-1519623286359-e9f3cbef015b?w=500", organic: false, unit: "Bundle" },
+  { id: 'v18', name: { en: "Mint", ar: "نعنع" }, category: "vegetables", price: 0.25, image: "https://images.unsplash.com/photo-1589133496078-43673523537e?w=500", organic: false, unit: "Bundle" },
+  { id: 'v19', name: { en: "Coriander", ar: "كزبرة" }, category: "vegetables", price: 0.25, image: "https://images.unsplash.com/photo-1512429234300-006236313882?w=500", organic: false, unit: "Bundle" },
+  { id: 'v20', name: { en: "Hot Green Chili", ar: "فلفل حار أخضر" }, category: "vegetables", price: 1.40, image: "https://images.unsplash.com/photo-1588165171080-c89acfa5ee83?w=500", organic: false, unit: "KG" },
+  { id: 'v21', name: { en: "Hot Red Chili", ar: "فلفل حار أحمر" }, category: "vegetables", price: 1.60, image: "https://images.unsplash.com/photo-1564669049400-308561f7480a?w=500", organic: false, unit: "KG" },
+  { id: 'v22', name: { en: "Radish", ar: "فجل" }, category: "vegetables", price: 0.40, image: "https://images.unsplash.com/photo-1594315513237-331006900f3f?w=500", organic: false, unit: "Bundle" },
+  { id: 'v23', name: { en: "Lettuce (Romaine)", ar: "خس بلدي" }, category: "vegetables", price: 0.50, image: "https://images.unsplash.com/photo-1556801712-76c822c67b0d?w=500", organic: false, unit: "Head" },
+  { id: 'v24', name: { en: "Iceberg Lettuce", ar: "خس آيسبرغ" }, category: "vegetables", price: 1.20, image: "https://images.unsplash.com/photo-1622206140733-4f9019d08605?w=500", organic: false, unit: "Head" },
+  { id: 'v25', name: { en: "Red Cabbage", ar: "ملفوف أحمر" }, category: "vegetables", price: 0.75, image: "https://images.unsplash.com/photo-1550147723-535308693892?w=500", organic: false, unit: "KG" },
+  { id: 'v26', name: { en: "White Cabbage", ar: "ملفوف أبيض" }, category: "vegetables", price: 0.45, image: "https://images.unsplash.com/photo-1611105637889-3df7df361093?w=500", organic: false, unit: "KG" },
+  { id: 'v27', name: { en: "Green Beans", ar: "فاصولياء خضراء" }, category: "vegetables", price: 2.10, image: "https://images.unsplash.com/photo-1567375639073-63720853844a?w=500", organic: false, unit: "KG" },
+  { id: 'v28', name: { en: "Okra (Baladi)", ar: "بامية بلدية" }, category: "vegetables", price: 3.50, image: "https://images.unsplash.com/photo-1464305795204-6f5bbfc7fb81?w=500", organic: false, unit: "KG" },
+  { id: 'v29', name: { en: "Peas (Green)", ar: "بازيلاء خضراء" }, category: "vegetables", price: 2.50, image: "https://images.unsplash.com/photo-1515471209610-dae1c92d8777?w=500", organic: false, unit: "KG" },
+  { id: 'v30', name: { en: "Sweet Corn", ar: "ذرة حلوة" }, category: "vegetables", price: 0.60, image: "https://images.unsplash.com/photo-1551754655-cd27e38d2076?w=500", organic: false, unit: "Ear" },
+  { id: 'v31', name: { en: "Pumpkin", ar: "يقطين" }, category: "vegetables", price: 0.90, image: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=500", organic: false, unit: "KG" },
+  { id: 'v32', name: { en: "Beetroot", ar: "شمندر" }, category: "vegetables", price: 0.85, image: "https://images.unsplash.com/photo-1528137858128-da533bc134cd?w=500", organic: false, unit: "KG" },
+  { id: 'v33', name: { en: "Celery", ar: "كرفس" }, category: "vegetables", price: 1.50, image: "https://images.unsplash.com/photo-1597362920556-3475bb5f3f7f?w=500", organic: false, unit: "Bundle" },
+  { id: 'v34', name: { en: "Artichoke", ar: "خرشوف" }, category: "vegetables", price: 1.00, image: "https://images.unsplash.com/photo-1518562144211-9f20b3f5879a?w=500", organic: false, unit: "Piece" },
+  { id: 'v35', name: { en: "Mushrooms (White)", ar: "فطر أبيض" }, category: "vegetables", price: 1.80, image: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=500", organic: false, unit: "Box" },
 
-  // --- FRUITS ---
-  { 
-    id: 'f3', 
-    name: { en: "Red Gala Apples", ar: "تفاح أحمر جالا" }, 
-    category: "fruits", 
-    price: 1.35, 
-    image: "https://images.unsplash.com/photo-1568702846914-96b305d2aaeb?w=500", 
-    organic: false,
-    unit: "KG"
-  },
+  // --- FRUITS (Approx 25 items) ---
+  { id: 'f2', name: { en: "Local Bananas", ar: "موز بلدي" }, category: "fruits", price: 1.20, image: "https://images.unsplash.com/photo-1571771894821-ad996211fdf4?w=500", organic: false, unit: "KG" },
+  { id: 'f3', name: { en: "Red Gala Apples", ar: "تفاح أحمر" }, category: "fruits", price: 1.35, image: "https://images.unsplash.com/photo-1568702846914-96b305d2aaeb?w=500", organic: false, unit: "KG" },
+  { id: 'f4', name: { en: "Green Smith Apples", ar: "تفاح أخضر" }, category: "fruits", price: 1.50, image: "https://images.unsplash.com/photo-1567306226416-28f0efdc88ce?w=500", organic: false, unit: "KG" },
+  { id: 'f5', name: { en: "Golden Apples", ar: "تفاح أصفر" }, category: "fruits", price: 1.30, image: "https://images.unsplash.com/photo-1615484477201-9f4953340fab?w=500", organic: false, unit: "KG" },
+  { id: 'f6', name: { en: "Seedless Grapes", ar: "عنب" }, category: "fruits", price: 1.75, image: "https://images.unsplash.com/photo-1537640538966-79f369b41e8f?w=500", organic: false, unit: "KG" },
+  { id: 'f7', name: { en: "Black Grapes", ar: "عنب أسود" }, category: "fruits", price: 2.00, image: "https://images.unsplash.com/photo-1423483641154-5411ec9c0ddf?w=500", organic: false, unit: "KG" },
+  { id: 'f8', name: { en: "Pears", ar: "إجاص" }, category: "fruits", price: 1.45, image: "https://images.unsplash.com/photo-1514756331096-242f3900f811?w=500", organic: false, unit: "KG" },
+  { id: 'f9', name: { en: "Peaches", ar: "دراق" }, category: "fruits", price: 2.50, image: "https://images.unsplash.com/photo-1521245353112-98c422896677?w=500", organic: false, unit: "KG" },
+  { id: 'f10', name: { en: "Nectarines", ar: "نكتارين" }, category: "fruits", price: 2.60, image: "https://images.unsplash.com/photo-1547514701-42782101795e?w=500", organic: false, unit: "KG" },
+  { id: 'f11', name: { en: "Apricots", ar: "مشمش" }, category: "fruits", price: 3.00, image: "https://images.unsplash.com/photo-1501199532029-4586261c4e18?w=500", organic: false, unit: "KG" },
+  { id: 'f12', name: { en: "Plums", ar: "خوخ" }, category: "fruits", price: 2.20, image: "https://images.unsplash.com/photo-1542614397-9092496734c8?w=500", organic: false, unit: "KG" },
+  { id: 'f13', name: { en: "Local Strawberries", ar: "فراولة" }, category: "fruits", price: 2.50, image: "https://images.unsplash.com/photo-1543528176-61b2395143a4?w=500", organic: false, unit: "Box" },
+  { id: 'f14', name: { en: "Blueberries", ar: "توت أزرق" }, category: "fruits", price: 3.50, image: "https://images.unsplash.com/photo-1497534446932-c946e7316a3c?w=500", organic: false, unit: "Box" },
+  { id: 'f15', name: { en: "Raspberries", ar: "توت أحمر" }, category: "fruits", price: 3.80, image: "https://images.unsplash.com/photo-1534062319207-6f01df222d64?w=500", organic: false, unit: "Box" },
+  { id: 'f16', name: { en: "Watermelon", ar: "بطيخ" }, category: "fruits", price: 0.35, image: "https://images.unsplash.com/photo-1589984662646-e7b2e4962f18?w=500", organic: false, unit: "KG" },
+  { id: 'f17', name: { en: "Sweet Melon", ar: "شمام" }, category: "fruits", price: 0.65, image: "https://images.unsplash.com/photo-1621535266898-7253503c5d6c?w=500", organic: false, unit: "KG" },
+  { id: 'f18', name: { en: "Kiwi", ar: "كيوي" }, category: "fruits", price: 1.80, image: "https://images.unsplash.com/photo-1585059895312-70c982997368?w=500", organic: false, unit: "KG" },
+  { id: 'f19', name: { en: "Mango", ar: "مانجا" }, category: "fruits", price: 2.80, image: "https://images.unsplash.com/photo-1553279768-865429fa0078?w=500", organic: false, unit: "KG" },
+  { id: 'f20', name: { en: "Pineapple", ar: "أناناس" }, category: "fruits", price: 3.50, image: "https://images.unsplash.com/photo-1550258987-190a2d41a8ba?w=500", organic: false, unit: "Piece" },
+  { id: 'f21', name: { en: "Pomegranate", ar: "رمان" }, category: "fruits", price: 1.60, image: "https://images.unsplash.com/photo-1541344999736-83eca882894e?w=500", organic: false, unit: "KG" },
+  { id: 'f22', name: { en: "Figs", ar: "تين" }, category: "fruits", price: 3.20, image: "https://images.unsplash.com/photo-1533590916375-37662b246b75?w=500", organic: false, unit: "KG" },
+  { id: 'f23', name: { en: "Guava", ar: "جوافة" }, category: "fruits", price: 2.40, image: "https://images.unsplash.com/photo-1536657235019-030712608101?w=500", organic: false, unit: "KG" },
+  { id: 'f24', name: { en: "Avocado", ar: "أفوكادو" }, category: "fruits", price: 3.50, image: "https://images.unsplash.com/photo-1523049673857-eb18f1d7b578?w=500", organic: false, unit: "KG" },
+  { id: 'f25', name: { en: "Lemons", ar: "ليمون" }, category: "fruits", price: 0.90, image: "https://images.unsplash.com/photo-1590502593747-42a996132182?w=500", organic: false, unit: "KG" },
 
-  // --- OTHER ---
-  { 
-    id: 'o2', 
-    name: { en: "Local Mountain Honey", ar: "عسل جبلي بلدي" }, 
-    category: "other", 
-    price: 12.00, 
-    image: "https://images.unsplash.com/photo-1589927986089-35812388d1f4?w=500", 
-    organic: true,
-    unit: "Jar"
-  },
-  { 
-    id: 'o3', 
-    name: { en: "Extra Virgin Olive Oil", ar: "زيت زيتون بكر" }, 
-    category: "other", 
-    price: 9.50, 
-    image: "https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=500", 
-    organic: true,
-    unit: "Liter"
-  }
+  // --- ORGANIC (10 items) ---
+  { id: 'org1', name: { en: "Organic Spinach", ar: "سبانخ عضوي" }, category: "organic", price: 2.00, image: "https://images.unsplash.com/photo-1576045057995-568f588f82fb?w=500", organic: true, unit: "Bundle" },
+  { id: 'org2', name: { en: "Organic Carrots", ar: "جزر عضوي" }, category: "organic", price: 1.80, image: "https://images.unsplash.com/photo-1598170845058-32b9d6a5da37?w=500", organic: true, unit: "KG" },
+  { id: 'org3', name: { en: "Organic Kale", ar: "كالي عضوي" }, category: "organic", price: 3.50, image: "https://images.unsplash.com/photo-1524179091875-bf99a9a6af57?w=500", organic: true, unit: "Bundle" },
+  { id: 'org4', name: { en: "Organic Tomatoes", ar: "بندورة عضوية" }, category: "organic", price: 2.50, image: "https://images.unsplash.com/photo-1592924357228-91a4daadcfea?w=500", organic: true, unit: "KG" },
+  { id: 'org5', name: { en: "Organic Arugula", ar: "جرجير عضوي" }, category: "organic", price: 1.50, image: "https://images.unsplash.com/photo-1591850053970-845984f236cd?w=500", organic: true, unit: "Bundle" },
+  { id: 'org6', name: { en: "Organic Beetroot", ar: "شمندر عضوي" }, category: "organic", price: 2.20, image: "https://images.unsplash.com/photo-1528137858128-da533bc134cd?w=500", organic: true, unit: "KG" },
+  { id: 'org7', name: { en: "Organic Apples", ar: "تفاح عضوي" }, category: "organic", price: 3.50, image: "https://images.unsplash.com/photo-1568702846914-96b305d2aaeb?w=500", organic: true, unit: "KG" },
+  { id: 'org8', name: { en: "Organic Ginger", ar: "زنجبيل عضوي" }, category: "organic", price: 6.00, image: "https://images.unsplash.com/photo-1550989460-0adf9ea622e2?w=500", organic: true, unit: "KG" },
+  { id: 'org9', name: { en: "Organic Turmeric", ar: "كركم عضوي" }, category: "organic", price: 8.00, image: "https://images.unsplash.com/photo-1615485500704-8e990f9900f7?w=500", organic: true, unit: "KG" },
+  { id: 'org10', name: { en: "Organic Basil", ar: "ريحان عضوي" }, category: "organic", price: 2.00, image: "https://images.unsplash.com/photo-1618375604116-2ac0b9ec1444?w=500", organic: true, unit: "Bundle" },
+
+  // --- OTHER (Remaining to reach 70+) ---
+  { id: 'o2', name: { en: "Local Mountain Honey", ar: "عسل جبلي" }, category: "other", price: 12.00, image: "https://images.unsplash.com/photo-1589927986089-35812388d1f4?w=500", organic: true, unit: "Jar" },
+  { id: 'o3', name: { en: "Extra Virgin Olive Oil", ar: "زيت زيتون بكر" }, category: "other", price: 9.50, image: "https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=500", organic: true, unit: "Liter" },
+  { id: 'o4', name: { en: "Baladi Eggs (30 pcs)", ar: "بيض بلدي" }, category: "other", price: 4.50, image: "https://images.unsplash.com/photo-1569254994521-ddb40316ec3b?w=500", organic: false, unit: "Plate" },
+  { id: 'o5', name: { en: "Apple Cider Vinegar", ar: "خل تفاح طبيعي" }, category: "other", price: 3.50, image: "https://images.unsplash.com/photo-1621535266898-7253503c5d6c?w=500", organic: true, unit: "Bottle" },
+  { id: 'o6', name: { en: "Pickled Olives", ar: "زيتون مخلل" }, category: "other", price: 5.00, image: "https://images.unsplash.com/photo-1568284566212-0544f1c1f43a?w=500", organic: false, unit: "KG" },
+  { id: 'o7', name: { en: "Dried Apricots", ar: "مشمش مجفف" }, category: "other", price: 6.50, image: "https://images.unsplash.com/photo-1501199532029-4586261c4e18?w=500", organic: false, unit: "Box" },
+  { id: 'o8', name: { en: "Raw Walnuts", ar: "جوز قلب" }, category: "other", price: 10.00, image: "https://images.unsplash.com/photo-1552392816-3a8c5eb32402?w=500", organic: false, unit: "KG" },
+  { id: 'o9', name: { en: "Pistachios", ar: "فستق حلبي" }, category: "other", price: 15.00, image: "https://images.unsplash.com/photo-1567306226416-28f0efdc88ce?w=500", organic: false, unit: "KG" },
+  { id: 'o10', name: { en: "Zaatar (Premium)", ar: "زعتر ملكي" }, category: "other", price: 4.50, image: "https://images.unsplash.com/photo-1512429234300-006236313882?w=500", organic: false, unit: "KG" }
 ];
 
 export const COLORS = {
