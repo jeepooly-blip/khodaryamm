@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Product, Order, Language, Enrollment } from '../types';
 import { db } from '../services/supabaseClient';
@@ -257,7 +256,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ lang, products, setProd
                     Vercel Environment Setup
                   </h3>
                   <p className="text-indigo-200 text-sm font-bold mb-8 max-w-xl">
-                    To ensure your database and AI features are secure and stable on Vercel, add these variables in your Vercel Dashboard under <b>Project Settings > Environment Variables</b>.
+                    To ensure your database and AI features are secure and stable on Vercel, add these variables in your Vercel Dashboard under <b>Project Settings &gt; Environment Variables</b>.
                   </p>
 
                   <div className="space-y-4">
