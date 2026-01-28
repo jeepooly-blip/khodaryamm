@@ -1,6 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Language } from '../types';
+import { db } from '../services/supabaseClient';
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -32,11 +33,8 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLogin, lang })
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
 
-  // Auto-detect demo admin number
   useEffect(() => {
-    if (phone === '790000000') {
-      setIsAdminMode(true);
-    }
+    if (phone === '790000000') setIsAdminMode(true);
   }, [phone]);
 
   if (!isOpen) return null;
@@ -44,35 +42,23 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLogin, lang })
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!phone) return;
-    
     setLoading(true);
     setErrorMsg('');
-    
     const result = await onLogin(phone, city, isAdminMode ? pin : undefined);
-    
     if (!result.success) {
-      if (result.error === 'INCORRECT_PIN') {
-        setErrorMsg(lang === 'ar' ? 'رمز الدخول غير صحيح' : 'Incorrect PIN entered');
-      } else {
-        setErrorMsg(lang === 'ar' ? 'خطأ في تسجيل الدخول. تأكد من البيانات.' : 'Login failed. Please check your details.');
-      }
+      setErrorMsg(result.error === 'INCORRECT_PIN' 
+        ? (lang === 'ar' ? 'رمز الدخول غير صحيح' : 'Incorrect PIN entered')
+        : (lang === 'ar' ? 'خطأ في تسجيل الدخول' : 'Login failed'));
     } else {
-      // Clear fields on success
-      setPhone('');
-      setPin('');
-      setIsAdminMode(false);
+      setPhone(''); setPin(''); setIsAdminMode(false);
     }
     setLoading(false);
   };
 
-  const toggleAdminMode = () => {
-    setIsAdminMode(!isAdminMode);
-    if (!isAdminMode) {
-      setPhone('790000000');
-    } else {
-      setPhone('');
-      setPin('');
-    }
+  const handleSocialLogin = async (provider: 'google' | 'github') => {
+    setLoading(true);
+    if (provider === 'google') await db.signInWithGoogle();
+    else await db.signInWithGithub();
   };
 
   return (
@@ -81,114 +67,90 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLogin, lang })
       
       <div className="relative bg-white w-full max-w-sm rounded-[2.5rem] shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-200 p-8">
         <div className="text-center">
-          <div className={`w-16 h-16 rounded-2xl flex items-center justify-center text-3xl mx-auto mb-4 shadow-sm transition-colors ${isAdminMode ? 'bg-indigo-50 text-indigo-700' : 'bg-green-50 text-green-700'}`}>
+          <div className={`w-16 h-16 rounded-2xl flex items-center justify-center text-3xl mx-auto mb-4 shadow-sm ${isAdminMode ? 'bg-indigo-50 text-indigo-700' : 'bg-green-50 text-green-700'}`}>
             {isAdminMode ? '🔐' : '🚚'}
           </div>
           <h2 className="text-xl font-black text-gray-800 mb-1">
-            {isAdminMode 
-              ? (lang === 'ar' ? 'دخول المدير' : 'Admin Login') 
-              : (lang === 'ar' ? 'أهلاً بك في خضرجي' : 'Welcome to Khodarji')}
+            {isAdminMode ? (lang === 'ar' ? 'دخول المدير' : 'Admin Login') : (lang === 'ar' ? 'أهلاً بك في خضرجي' : 'Welcome to Khodarji')}
           </h2>
           <p className="text-gray-400 font-bold text-[10px] mb-6 uppercase tracking-widest">
-            {isAdminMode 
-              ? (lang === 'ar' ? 'يرجى إدخال رمز التحقق الخاص بك' : 'Please enter your secure PIN')
-              : (lang === 'ar' ? 'يرجى إدخال بيانات التوصيل' : 'Please enter delivery details')}
+            {isAdminMode ? (lang === 'ar' ? 'رمز التحقق' : 'Secure PIN') : (lang === 'ar' ? 'بيانات الدخول' : 'Sign in to continue')}
           </p>
+
+          {!isAdminMode && (
+            <div className="space-y-3 mb-6">
+              <button 
+                onClick={() => handleSocialLogin('google')}
+                className="w-full flex items-center justify-center gap-3 py-3 border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors font-bold text-sm text-gray-700"
+              >
+                <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" className="w-5 h-5" alt="Google" />
+                {lang === 'ar' ? 'متابعة باستخدام جوجل' : 'Continue with Google'}
+              </button>
+              <button 
+                onClick={() => handleSocialLogin('github')}
+                className="w-full flex items-center justify-center gap-3 py-3 bg-gray-900 hover:bg-black transition-colors font-bold text-sm text-white rounded-xl"
+              >
+                <i className="bi bi-github text-lg"></i>
+                {lang === 'ar' ? 'متابعة باستخدام جيت هب' : 'Continue with GitHub'}
+              </button>
+              <div className="relative flex items-center py-2">
+                <div className="flex-grow border-t border-gray-100"></div>
+                <span className="flex-shrink mx-4 text-[10px] font-black text-gray-300 uppercase tracking-widest">{lang === 'ar' ? 'أو' : 'OR'}</span>
+                <div className="flex-grow border-t border-gray-100"></div>
+              </div>
+            </div>
+          )}
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="text-left" dir="ltr">
-              <label className="block text-[9px] font-black text-gray-400 mb-1 uppercase tracking-widest ml-1">
-                WhatsApp Phone
-              </label>
+              <label className="block text-[9px] font-black text-gray-400 mb-1 uppercase tracking-widest">Phone Number</label>
               <div className="flex">
-                <span className={`inline-flex items-center px-3 rounded-l-xl border border-r-0 font-black text-xs transition-colors ${isAdminMode ? 'bg-indigo-50 border-indigo-100 text-indigo-400' : 'bg-gray-50 border-gray-100 text-gray-500'}`}>
-                  +962
-                </span>
+                <span className="inline-flex items-center px-3 rounded-l-xl border border-r-0 font-black text-xs bg-gray-50 text-gray-500">+962</span>
                 <input
-                  type="tel"
-                  required
-                  placeholder="7XXXXXXXX"
-                  value={phone}
+                  type="tel" required placeholder="7XXXXXXXX" value={phone}
                   onChange={(e) => setPhone(e.target.value.replace(/\D/g, '').slice(0, 9))}
-                  className={`flex-1 block w-full rounded-none rounded-r-xl border p-3 text-lg font-black tracking-widest focus:outline-none transition-all ${isAdminMode ? 'bg-indigo-50/30 border-indigo-100 focus:ring-2 focus:ring-indigo-500' : 'bg-gray-50/50 border-gray-100 focus:ring-2 focus:ring-[#266041]'}`}
+                  className="flex-1 block w-full rounded-none rounded-r-xl border p-3 text-lg font-black tracking-widest focus:outline-none"
                 />
               </div>
             </div>
 
             {isAdminMode && (
-              <div className="text-left animate-in slide-in-from-top-2">
-                <label className={`block text-[9px] font-black text-indigo-400 mb-1 uppercase tracking-widest ${lang === 'ar' ? 'text-right' : 'text-left'}`}>
-                  {lang === 'ar' ? 'رمز الدخول (6 أرقام)' : 'Admin Access PIN (6 Digits)'}
-                </label>
+              <div className="text-left">
                 <input
-                  type="password"
-                  maxLength={6}
-                  required
-                  placeholder="••••••"
-                  value={pin}
+                  type="password" maxLength={6} required placeholder="••••••" value={pin}
                   onChange={(e) => setPin(e.target.value.replace(/\D/g, ''))}
-                  className="w-full bg-indigo-50/50 border border-indigo-100 rounded-xl p-3 text-center text-2xl font-black tracking-[0.5em] focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+                  className="w-full bg-indigo-50/50 border border-indigo-100 rounded-xl p-3 text-center text-2xl font-black tracking-[0.5em] focus:outline-none"
                 />
               </div>
             )}
 
             {!isAdminMode && (
               <div className="text-left">
-                <label className={`block text-[9px] font-black text-gray-400 mb-1 uppercase tracking-widest ${lang === 'ar' ? 'text-right mr-1' : 'ml-1'}`}>
-                  {lang === 'ar' ? 'مدينة التوصيل' : 'Delivery City'}
-                </label>
                 <select
-                  value={city}
-                  onChange={(e) => setCity(e.target.value)}
-                  className="w-full bg-gray-50 border border-gray-100 rounded-xl p-3 text-xs font-black text-[#266041] focus:ring-2 focus:ring-[#266041] focus:outline-none appearance-none"
+                  value={city} onChange={(e) => setCity(e.target.value)}
+                  className="w-full bg-gray-50 border border-gray-100 rounded-xl p-3 text-xs font-black text-[#266041] appearance-none"
                 >
-                  {JORDAN_CITIES.map(c => (
-                    <option key={c.en} value={c.en}>
-                      {lang === 'ar' ? c.ar : c.en}
-                    </option>
-                  ))}
+                  {JORDAN_CITIES.map(c => <option key={c.en} value={c.en}>{lang === 'ar' ? c.ar : c.en}</option>)}
                 </select>
               </div>
             )}
             
-            {errorMsg && (
-              <p className="text-red-500 text-[10px] font-black animate-bounce">{errorMsg}</p>
-            )}
+            {errorMsg && <p className="text-red-500 text-[10px] font-black">{errorMsg}</p>}
 
             <button 
-              type="submit"
-              disabled={loading}
-              className={`w-full py-4 rounded-xl font-black text-sm shadow-xl transition-all transform active:scale-95 flex items-center justify-center gap-2 ${isAdminMode ? 'bg-indigo-900 text-white' : 'bg-[#266041] text-white'}`}
+              type="submit" disabled={loading}
+              className={`w-full py-4 rounded-xl font-black text-sm shadow-xl transition-all active:scale-95 flex items-center justify-center gap-2 ${isAdminMode ? 'bg-indigo-900 text-white' : 'bg-[#266041] text-white'}`}
             >
-              {loading ? (
-                <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-              ) : (
-                <>
-                  <i className={`bi ${isAdminMode ? 'bi-shield-lock' : 'bi-shop'}`}></i>
-                  {isAdminMode 
-                    ? (lang === 'ar' ? 'تأكيد الرمز' : 'Verify PIN') 
-                    : (lang === 'ar' ? 'بدء التسوق' : 'Start Shopping')}
-                </>
-              )}
+              {loading ? <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div> : (lang === 'ar' ? 'دخول' : 'Login')}
             </button>
           </form>
 
           <div className="mt-6 pt-4 border-t border-gray-50 flex items-center justify-center gap-4">
-            <button 
-              onClick={toggleAdminMode}
-              className={`text-[9px] font-black uppercase tracking-widest transition-colors ${isAdminMode ? 'text-green-600' : 'text-indigo-400'}`}
-            >
-              {isAdminMode 
-                ? (lang === 'ar' ? 'دخول الزبائن' : 'Customer Login') 
-                : (lang === 'ar' ? 'دخول المدير' : 'Admin Login')}
+            <button onClick={() => setIsAdminMode(!isAdminMode)} className="text-[9px] font-black uppercase tracking-widest text-indigo-400">
+              {isAdminMode ? (lang === 'ar' ? 'دخول زبائن' : 'Customer Login') : (lang === 'ar' ? 'دخول مدير' : 'Admin Login')}
             </button>
             <span className="text-gray-200">|</span>
-            <button 
-              onClick={onClose}
-              className="text-[9px] text-gray-400 hover:text-gray-600 font-black uppercase tracking-widest"
-            >
-              {lang === 'ar' ? 'إغلاق' : 'Close'}
-            </button>
+            <button onClick={onClose} className="text-[9px] text-gray-400 font-black uppercase tracking-widest">{lang === 'ar' ? 'إغلاق' : 'Close'}</button>
           </div>
         </div>
       </div>
