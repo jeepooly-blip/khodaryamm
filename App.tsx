@@ -13,7 +13,7 @@ import AuthModal from './components/AuthModal';
 import WhatsAppEnrollment from './components/WhatsAppEnrollment';
 import AddToHomeScreen from './components/AddToHomeScreen';
 
-const APP_VERSION = "1.4.0-voice";
+const APP_VERSION = "1.4.1-voice-fix";
 
 const App: React.FC = () => {
   const [lang, setLang] = useState<Language>('ar');
@@ -136,8 +136,6 @@ const App: React.FC = () => {
       if (existing) return prev.map(item => item.id === product.id ? { ...item, quantity: item.quantity + quantity } : item);
       return [...prev, { ...product, quantity }];
     });
-    // For voice orders, we might not want to pop open the drawer every time an item is added, 
-    // but the user's "Confirm" action will open it anyway.
   }, []);
 
   const createOrder = async (phone: string, city: string) => {
@@ -265,6 +263,7 @@ const App: React.FC = () => {
         products={products} 
         lang={lang} 
         onAddToCart={addToCart} 
+        onOpenCart={() => setIsCartOpen(true)}
       />
       
       <AddToHomeScreen lang={lang} />
