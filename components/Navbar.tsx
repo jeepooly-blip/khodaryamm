@@ -91,6 +91,7 @@ const Navbar: React.FC<NavbarProps> = ({
           </button>
 
           <button 
+            aria-label="cart-toggle"
             onClick={onCartClick}
             className="relative p-2 hover:bg-white/10 rounded-xl transition-all group"
           >

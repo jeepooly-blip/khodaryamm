@@ -127,6 +127,10 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ lang, products, setProd
     setEditingProduct(null);
   };
 
+  const openCustomerChat = (phone: string) => {
+    window.open(`https://wa.me/962${phone}`, '_blank');
+  };
+
   return (
     <div className="py-8 animate-in fade-in duration-500 max-w-[1400px] mx-auto px-4">
       <input type="file" accept=".csv" ref={fileInputRef} onChange={handleImportCSV} className="hidden" />
@@ -220,7 +224,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ lang, products, setProd
                           <option value="pending">Pending</option><option value="processing">Processing</option><option value="completed">Completed</option><option value="cancelled">Cancelled</option>
                         </select>
                       </td>
-                      <td className="px-6 py-4 text-right"><button onClick={() => setSelectedOrder(o)} className="text-indigo-400"><i className="bi bi-eye"></i></button></td>
+                      <td className="px-6 py-4 text-right"><button onClick={() => setSelectedOrder(o)} className="text-indigo-400 hover:text-indigo-950 transition-colors"><i className="bi bi-eye-fill text-xl"></i></button></td>
                     </tr>
                   ))}
                 </tbody>
@@ -311,24 +315,148 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ lang, products, setProd
       {selectedOrder && (
         <div className="fixed inset-0 z-[300] flex items-center justify-center p-4 backdrop-blur-md">
           <div className="absolute inset-0 bg-indigo-950/60" onClick={() => setSelectedOrder(null)} />
-          <div className="relative bg-white w-full max-w-2xl rounded-[2.5rem] p-8 shadow-2xl max-h-[90vh] flex flex-col">
-            <div className="flex justify-between items-center mb-6">
-              <h3 className="text-xl font-black text-indigo-950">Order Details #{selectedOrder.id}</h3>
-              <button onClick={() => setSelectedOrder(null)} className="p-2 text-gray-400"><i className="bi bi-x-lg"></i></button>
+          <div className="relative bg-white w-full max-w-3xl rounded-[2.5rem] p-0 shadow-2xl max-h-[90vh] flex flex-col overflow-hidden animate-in zoom-in-95 duration-200">
+            {/* Modal Header */}
+            <div className="px-8 py-6 bg-indigo-950 text-white flex justify-between items-center shrink-0">
+              <div className="flex items-center gap-4">
+                <div className="bg-white/20 p-3 rounded-2xl">
+                  <i className="bi bi-receipt-cutoff text-2xl"></i>
+                </div>
+                <div>
+                  <h3 className="text-xl font-black leading-none mb-1">Order Details #{selectedOrder.id}</h3>
+                  <p className="text-[10px] font-black opacity-60 uppercase tracking-[0.2em]">
+                    {new Date(selectedOrder.createdAt).toLocaleString(lang === 'ar' ? 'ar-JO' : 'en-US')}
+                  </p>
+                </div>
+              </div>
+              <button onClick={() => setSelectedOrder(null)} className="p-2 hover:bg-white/10 rounded-full transition-colors">
+                <i className="bi bi-x-lg text-xl"></i>
+              </button>
             </div>
-            <div className="flex-grow overflow-y-auto space-y-4 pr-2">
-              {selectedOrder.items.map((item, idx) => (
-                <div key={idx} className="flex justify-between items-center border-b border-gray-50 pb-3">
-                  <div className="flex items-center gap-3">
-                    <img src={item.image} className="w-12 h-12 rounded-xl object-cover" />
-                    <div>
-                      <p className="font-bold text-gray-800 text-sm">{item.name[lang]}</p>
-                      <p className="text-[10px] text-gray-400 font-black uppercase">{item.quantity} {item.unit} @ {item.discountPrice || item.price} JD</p>
+
+            <div className="flex-grow overflow-y-auto">
+              <div className="p-8 space-y-8">
+                {/* Customer & Status Info */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="bg-indigo-50/50 rounded-3xl p-6 border border-indigo-100">
+                    <h4 className="text-[10px] font-black text-indigo-400 uppercase tracking-widest mb-4">Customer Information</h4>
+                    <div className="space-y-4">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <div className="bg-white p-2 rounded-xl text-indigo-600 shadow-sm">
+                            <i className="bi bi-telephone-fill"></i>
+                          </div>
+                          <span className="font-black text-indigo-950 tracking-widest">+962 {selectedOrder.customerPhone}</span>
+                        </div>
+                        <button 
+                          onClick={() => openCustomerChat(selectedOrder.customerPhone)}
+                          className="bg-green-500 hover:bg-green-600 text-white p-2 rounded-xl shadow-lg shadow-green-500/20 transition-all active:scale-90"
+                        >
+                          <i className="bi bi-whatsapp"></i>
+                        </button>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <div className="bg-white p-2 rounded-xl text-indigo-600 shadow-sm">
+                          <i className="bi bi-geo-alt-fill"></i>
+                        </div>
+                        <span className="font-black text-indigo-950 uppercase text-xs">{selectedOrder.customerCity}</span>
+                      </div>
                     </div>
                   </div>
-                  <p className="font-black text-indigo-950">{( (item.discountPrice || item.price) * item.quantity).toFixed(2)} JD</p>
+
+                  <div className="bg-indigo-50/50 rounded-3xl p-6 border border-indigo-100 flex flex-col justify-between">
+                    <div>
+                      <h4 className="text-[10px] font-black text-indigo-400 uppercase tracking-widest mb-4">Management</h4>
+                      <div className="flex items-center gap-3 mb-4">
+                        <div className="bg-white p-2 rounded-xl text-indigo-600 shadow-sm">
+                          <i className="bi bi-info-circle-fill"></i>
+                        </div>
+                        <select 
+                          value={selectedOrder.status} 
+                          onChange={(e) => onUpdateOrderStatus(selectedOrder.id, e.target.value as any)} 
+                          className="flex-1 bg-white border border-indigo-100 rounded-xl px-3 py-1.5 text-xs font-black uppercase tracking-widest text-indigo-950 focus:outline-none"
+                        >
+                          <option value="pending">Pending</option>
+                          <option value="processing">Processing</option>
+                          <option value="completed">Completed</option>
+                          <option value="cancelled">Cancelled</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div className={`px-4 py-2 rounded-xl text-center text-[10px] font-black uppercase tracking-widest ${
+                      selectedOrder.status === 'pending' ? 'bg-orange-100 text-orange-600' :
+                      selectedOrder.status === 'completed' ? 'bg-green-100 text-green-600' :
+                      'bg-red-100 text-red-600'
+                    }`}>
+                      Current Status: {selectedOrder.status}
+                    </div>
+                  </div>
                 </div>
-              ))}
+
+                {/* Items Breakdown */}
+                <div>
+                  <h4 className="text-[10px] font-black text-indigo-400 uppercase tracking-widest mb-4 border-b border-indigo-50 pb-2">Item Breakdown</h4>
+                  <div className="space-y-3">
+                    {selectedOrder.items.map((item, idx) => {
+                      const activePrice = item.discountPrice && item.discountPrice < item.price ? item.discountPrice : item.price;
+                      return (
+                        <div key={idx} className="flex items-center justify-between p-4 bg-white rounded-2xl border border-gray-100 hover:shadow-md transition-shadow group">
+                          <div className="flex items-center gap-4">
+                            <img src={item.image} className="w-14 h-14 rounded-xl object-cover border border-gray-100 shadow-sm" alt="" />
+                            <div>
+                              <p className="font-black text-indigo-950 text-sm mb-1">{item.name[lang]}</p>
+                              <div className="flex items-center gap-2">
+                                <span className="text-[10px] font-black text-indigo-400 uppercase bg-indigo-50 px-2 py-0.5 rounded-md">
+                                  {item.quantity} {item.unit}
+                                </span>
+                                <span className="text-[10px] font-bold text-gray-400">@ {activePrice.toFixed(2)} JD</span>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="text-right">
+                            <p className="text-sm font-black text-indigo-950">{(activePrice * item.quantity).toFixed(2)} JD</p>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Order Summary */}
+                <div className="bg-indigo-950 text-white rounded-[2rem] p-8 shadow-xl">
+                  <div className="space-y-3">
+                    <div className="flex justify-between text-xs font-bold opacity-60">
+                      <span>Subtotal</span>
+                      <span>{selectedOrder.subtotal.toFixed(2)} JD</span>
+                    </div>
+                    <div className="flex justify-between text-xs font-bold opacity-60">
+                      <span>Delivery Fee</span>
+                      <span>{selectedOrder.deliveryFee === 0 ? 'FREE' : `${selectedOrder.deliveryFee.toFixed(2)} JD`}</span>
+                    </div>
+                    <div className="pt-4 border-t border-white/10 flex justify-between items-center">
+                      <span className="text-sm font-black uppercase tracking-widest">Grand Total</span>
+                      <span className="text-3xl font-black text-orange-400">{selectedOrder.total.toFixed(2)} <span className="text-xs opacity-60">JD</span></span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Modal Footer Actions */}
+            <div className="p-6 bg-gray-50 border-t border-gray-100 flex gap-4 shrink-0">
+              <button 
+                onClick={() => openCustomerChat(selectedOrder.customerPhone)}
+                className="flex-1 bg-green-600 hover:bg-green-700 text-white py-4 rounded-2xl font-black text-sm shadow-xl shadow-green-600/20 transition-all flex items-center justify-center gap-3 active:scale-95"
+              >
+                <i className="bi bi-whatsapp text-xl"></i>
+                Contact via WhatsApp
+              </button>
+              <button 
+                onClick={() => setSelectedOrder(null)}
+                className="px-8 bg-white border border-gray-200 text-gray-400 py-4 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-gray-100 transition-all"
+              >
+                Close Details
+              </button>
             </div>
           </div>
         </div>

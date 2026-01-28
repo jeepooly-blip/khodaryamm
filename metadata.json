@@ -1,8 +1,10 @@
+
 {
   "name": "Khodarji2",
   "description": "Premium produce delivery app",
   "requestFramePermissions": [
-    "geolocation"
+    "geolocation",
+    "microphone"
   ],
   "view_mode": "standalone",
   "orientation": "portrait"
