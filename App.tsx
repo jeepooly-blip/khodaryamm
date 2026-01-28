@@ -10,11 +10,10 @@ import AdminDashboard from './components/AdminDashboard';
 import OrderHistory from './components/OrderHistory';
 import GeminiAssistant from './components/GeminiAssistant';
 import AuthModal from './components/AuthModal';
-import SpecialDeals from './components/SpecialDeals';
 import WhatsAppEnrollment from './components/WhatsAppEnrollment';
 import AddToHomeScreen from './components/AddToHomeScreen';
 
-const APP_VERSION = "1.2.8-stable";
+const APP_VERSION = "1.2.9-stable";
 
 const App: React.FC = () => {
   const [lang, setLang] = useState<Language>('ar');
@@ -208,21 +207,19 @@ const App: React.FC = () => {
           <div className="max-w-4xl mx-auto px-4 mt-8 pb-20"><OrderHistory lang={lang} orders={orders} /></div>
         ) : (
           <div className="animate-in fade-in duration-700 w-full pb-24">
-            <section className="relative h-[30vh] md:h-[45vh] flex items-center justify-center bg-green-900 overflow-hidden">
+            <section className="relative h-[25vh] md:h-[40vh] flex items-center justify-center bg-green-900 overflow-hidden">
                <div className="absolute inset-0 bg-cover bg-center opacity-40" style={{ backgroundImage: `url('https://images.unsplash.com/photo-1542838132-92c53300491e?w=1600')` }}></div>
                <div className="relative text-center px-6 z-10 text-white">
-                 <h1 className="text-3xl md:text-7xl font-black mb-2 md:mb-4">{lang === 'ar' ? 'خضرتك بلدية وطازجة' : "Jordan's Finest"}</h1>
-                 <p className="text-sm md:text-2xl font-bold opacity-90">{lang === 'ar' ? 'من مزارعنا لمائدتك' : 'From our farms to your table'}</p>
+                 <h1 className="text-2xl md:text-7xl font-black mb-1 md:mb-4">{lang === 'ar' ? 'خضرتك بلدية وطازجة' : "Jordan's Finest"}</h1>
+                 <p className="text-[10px] md:text-2xl font-bold opacity-90">{lang === 'ar' ? 'من مزارعنا لمائدتك' : 'From our farms to your table'}</p>
                </div>
             </section>
             
-            {!searchTerm && <SpecialDeals products={products} lang={lang} onAddToCart={addToCart} />}
-            
-            <div className="max-w-7xl mx-auto px-0 md:px-4 py-4 md:py-6">
+            <div className="max-w-7xl mx-auto px-0 md:px-4 py-2 md:py-6">
               <ProductGrid products={products} lang={lang} onAddToCart={addToCart} searchTerm={searchTerm} isLoading={isProductsLoading} />
             </div>
             
-            {!searchTerm && <div className="max-w-7xl mx-auto px-4 py-8 md:py-12"><WhatsAppEnrollment lang={lang} /></div>}
+            {!searchTerm && <div className="max-w-7xl mx-auto px-4 py-6 md:py-12"><WhatsAppEnrollment lang={lang} /></div>}
             
             <div className="text-center opacity-10 text-[8px] mt-10">
               v{APP_VERSION}

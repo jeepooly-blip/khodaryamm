@@ -30,7 +30,7 @@ const AddToHomeScreen: React.FC<AddToHomeScreenProps> = ({ lang }) => {
 
     if (isIOS) {
       setPlatform('ios');
-      const timer = setTimeout(() => setIsVisible(true), 4000);
+      const timer = setTimeout(() => setIsVisible(true), 3000);
       return () => clearTimeout(timer);
     } else if (isAndroid) {
       setPlatform('android');
@@ -54,14 +54,14 @@ const AddToHomeScreen: React.FC<AddToHomeScreenProps> = ({ lang }) => {
       try {
         await navigator.share({
           title: 'Khodarji - خضرجي',
-          text: lang === 'ar' ? 'اطلب خضرتك طازجة من تطبيق خضرجي' : 'Order fresh produce from Khodarji App',
-          url: window.location.origin,
+          text: lang === 'ar' ? 'تطبيق خضرجي للخضار والفواكه الطازجة في الأردن' : 'Khodarji - Fresh produce delivery in Jordan',
+          url: window.location.href
         });
       } catch (err) {
         console.log('Share failed:', err);
       }
     } else {
-      alert(lang === 'ar' ? 'المشاركة غير مدعومة في هذا المتصفح' : 'Sharing not supported in this browser');
+      alert(lang === 'ar' ? 'المشاركة غير مدعومة في هذا المتصفح' : 'Share not supported in this browser');
     }
   };
 
@@ -71,6 +71,8 @@ const AddToHomeScreen: React.FC<AddToHomeScreenProps> = ({ lang }) => {
       const { outcome } = await deferredPrompt.userChoice;
       if (outcome === 'accepted') setIsVisible(false);
       setDeferredPrompt(null);
+    } else if (platform === 'ios') {
+      // Logic handled via instructions in UI
     }
   };
 
@@ -80,7 +82,7 @@ const AddToHomeScreen: React.FC<AddToHomeScreenProps> = ({ lang }) => {
     <div className="fixed inset-x-0 bottom-0 z-[1000] p-4 animate-in slide-in-from-bottom-full duration-700">
       <div className="max-w-md mx-auto bg-white rounded-[2.5rem] shadow-[0_-20px_60px_-15px_rgba(0,0,0,0.3)] border border-gray-100 overflow-hidden relative">
         <div className="p-6">
-          <div className="flex items-start justify-between mb-2">
+          <div className="flex items-start justify-between mb-4">
             <button onClick={handleDismiss} className="p-2 -mt-2 -ml-2 text-gray-300 hover:text-gray-600 transition-colors">
               <i className="bi bi-x-lg text-lg"></i>
             </button>
@@ -97,8 +99,8 @@ const AddToHomeScreen: React.FC<AddToHomeScreenProps> = ({ lang }) => {
             </div>
           </div>
 
-          <div className="mt-6 bg-gray-50/80 rounded-[2rem] p-6 border border-gray-100 space-y-5">
-            <p className="text-xs font-bold text-gray-600 leading-relaxed text-center px-4">
+          <div className="mt-2 bg-gray-50/80 rounded-[2rem] p-6 border border-gray-100 space-y-6">
+            <p className="text-xs font-bold text-gray-600 leading-relaxed text-center px-2">
               {platform === 'ios' 
                 ? (lang === 'ar' ? 'للتثبيت: اضغط على أيقونة "المشاركة" بالأسفل ثم اختر "إضافة إلى الشاشة الرئيسية".' : 'To install: Tap "Share" below and select "Add to Home Screen".')
                 : (lang === 'ar' ? 'اضغط على زر التثبيت للحصول على تجربة تطبيق كاملة.' : 'Tap Install for a full app experience.')
@@ -110,21 +112,21 @@ const AddToHomeScreen: React.FC<AddToHomeScreenProps> = ({ lang }) => {
                  onClick={handleShare}
                  className="flex flex-col items-center gap-2 group active:scale-95 transition-transform"
                >
-                 <div className="bg-white p-3 rounded-2xl shadow-md border border-gray-100 group-hover:bg-blue-50">
-                    <i className="bi bi-box-arrow-up text-blue-500 text-2xl"></i>
+                 <div className="bg-white p-4 rounded-2xl shadow-md border border-gray-100 group-hover:bg-blue-50 text-blue-500">
+                    <i className="bi bi-box-arrow-up text-2xl"></i>
                  </div>
                  <span className="text-[9px] font-black text-gray-400 uppercase tracking-tighter">SHARE</span>
                </button>
 
                <div className="text-gray-200">
-                  <i className="bi bi-arrow-right text-xl"></i>
+                  <i className={`bi bi-arrow-${lang === 'ar' ? 'left' : 'right'} text-xl`}></i>
                </div>
 
                <button 
                  onClick={platform === 'android' ? handleInstallClick : undefined}
                  className="flex flex-col items-center gap-2 group active:scale-95 transition-transform"
                >
-                 <div className={`p-3 rounded-2xl shadow-md border border-gray-100 group-hover:bg-green-50 ${platform === 'android' && deferredPrompt ? 'bg-green-500 text-white' : 'bg-white text-gray-700'}`}>
+                 <div className={`p-4 rounded-2xl shadow-md border border-gray-100 group-hover:bg-green-50 ${platform === 'android' ? 'bg-green-500 text-white' : 'bg-white text-gray-700'}`}>
                     <i className={`bi ${platform === 'android' ? 'bi-download' : 'bi-plus-square'} text-2xl`}></i>
                  </div>
                  <span className="text-[9px] font-black text-gray-400 uppercase tracking-tighter">

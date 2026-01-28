@@ -14,7 +14,7 @@ interface ProductGridProps {
 const ProductGrid: React.FC<ProductGridProps> = ({ products, lang, onAddToCart, searchTerm, isLoading }) => {
   const [filter, setFilter] = useState<Product['category'] | 'all'>('all');
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 12;
+  const itemsPerPage = 20; // Increased items per page for the compact grid
 
   useEffect(() => {
     setCurrentPage(1);
@@ -55,8 +55,8 @@ const ProductGrid: React.FC<ProductGridProps> = ({ products, lang, onAddToCart, 
   };
 
   return (
-    <div className="py-2 md:py-4 w-full max-w-[1600px] mx-auto">
-      <div className="flex overflow-x-auto pb-4 md:pb-6 mb-2 scrollbar-hide gap-1.5 md:gap-3 justify-start lg:justify-center px-4">
+    <div className="w-full max-w-[1600px] mx-auto">
+      <div className="flex overflow-x-auto pb-3 md:pb-6 mb-1 scrollbar-hide gap-1.5 md:gap-3 justify-start lg:justify-center px-4">
         {categories.map(cat => (
           <button
             key={cat.id}
@@ -74,6 +74,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({ products, lang, onAddToCart, 
       </div>
 
       <div className="px-0 md:px-4">
+        {/* Changed gap to gap-[1px] on mobile for the tile look */}
         <div className="grid grid-cols-2 lg:grid-cols-6 gap-[1px] md:gap-6 w-full bg-gray-100 md:bg-transparent border-y border-gray-100 md:border-0">
           {paginatedProducts.map(product => (
             <ProductCard 
@@ -95,7 +96,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({ products, lang, onAddToCart, 
         )}
 
         {showPagination && totalPages > 1 && (
-          <div className="flex justify-center items-center gap-2 mt-8 md:mt-12 pb-8 px-4">
+          <div className="flex justify-center items-center gap-2 mt-6 md:mt-12 pb-8 px-4">
             <button
               disabled={currentPage === 1}
               onClick={() => handlePageChange(currentPage - 1)}

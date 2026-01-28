@@ -14,7 +14,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, lang, onAdd }) => {
   const currentPrice = hasDiscount ? product.discountPrice! : product.price;
 
   return (
-    <div className="bg-white rounded-lg md:rounded-[2rem] shadow-sm border border-gray-100 overflow-hidden flex flex-col h-full hover:shadow-lg transition-all duration-300 group">
+    <div className="bg-white md:rounded-[2rem] shadow-sm md:border border-gray-100 overflow-hidden flex flex-col h-full hover:shadow-lg transition-all duration-300 group">
       <div className="relative aspect-square overflow-hidden bg-gray-50">
         <img 
           src={product.image} 
@@ -37,11 +37,11 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, lang, onAdd }) => {
       </div>
 
       <div className="p-1.5 md:p-4 flex flex-col flex-grow">
-        <h3 className="font-black text-gray-800 text-[10px] md:text-base line-clamp-2 min-h-[1.25rem] md:min-h-[2.5rem] mb-1 leading-tight">
+        <h3 className="font-black text-gray-800 text-[10px] md:text-base line-clamp-2 min-h-[1.2rem] md:min-h-[2.5rem] mb-1 leading-tight">
           {product.name[lang]}
         </h3>
         
-        <div className="flex items-center gap-1 md:gap-2 mb-1.5 md:mb-4">
+        <div className="flex items-center gap-1 md:gap-2 mb-1 md:mb-4">
           <div className="flex items-baseline gap-0.5 md:gap-1">
             <span className="text-[#ff5722] font-black text-xs md:text-xl">{currentPrice.toFixed(2)}</span>
             <span className="text-[6px] md:text-[10px] font-bold text-gray-400 uppercase tracking-tighter">JD / {product.unit}</span>
@@ -75,7 +75,8 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, lang, onAdd }) => {
             }`}
           >
             <i className="bi bi-cart-plus text-[10px] md:text-lg"></i>
-            <span>{lang === 'ar' ? 'أضف' : 'Add'}</span>
+            <span className="hidden md:inline">{lang === 'ar' ? 'أضف للسلة' : 'Add to Cart'}</span>
+            <span className="md:hidden">{lang === 'ar' ? 'أضف' : 'Add'}</span>
           </button>
         </div>
       </div>
